@@ -12,23 +12,36 @@ describe "@User - API endpoints", type: :request do
     end
   end
 
-  describe "GET /users/:id" do
+  describe "GET /users/:id/" do
     context "when user exists" do
-      it "returns the user with reviews" do
-        create(:review, user: alice, body: "Great!")
-        get "/users/#{alice.id}"
+      it "returns the user" do
+        get "/users/#{bob.id}"
         expect(last_response.status).to eq(200)
-        expect(json_body['name']).to eq('Alice')
-        expect(json_body['reviews'].size).to eq(1)
-        expect(json_body['reviews'].first['body']).to eq('Great!')
+        expect(json_body['name']).to eq('Bob')
       end
     end
+  end
 
     context "when user does not exist" do
       it "returns 404" do
         get '/users/99999'
         expect(last_response.status).to eq(404)
         expect(json_body['error']).to eq('User not found')
+      end
+    end
+
+  describe "GET /users/:id/reviews" do
+    context "when user exists" do
+      it "returns all reviews for the user" do
+        create(:review, user: bob, comment: "Great!")
+        create(:review, user: bob, comment: "Excellent!")
+
+        get "/users/#{bob.id}/reviews"
+
+        expect(last_response.status).to eq(200)
+        expect(json_body.size).to eq(2)
+        expect(json_body.first['comment']).to eq('Great!')
+        expect(json_body.last['comment']).to eq('Excellent!')
       end
     end
   end

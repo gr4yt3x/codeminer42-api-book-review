@@ -10,3 +10,5 @@ group :test do
   gem "database_cleaner-active_record"
   gem "factory_bot"
 end
+
+gem "sinatra-activerecord", "~> 2.0"

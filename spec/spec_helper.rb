@@ -8,6 +8,7 @@ require_relative '../app'
 require_relative '../config/database'
 
 Dir[File.join(File.dirname(__FILE__), '../models/*.rb')].sort.each { |file| require file }
+RailsApp = Rack::Builder.parse_file(File.expand_path('../config.ru', __dir__))
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
@@ -16,7 +17,7 @@ RSpec.configure do |config|
   FactoryBot.find_definitions
 
   def app
-    BookReviewAPI
+    RailsApp
   end
 
   config.before(:suite) { DatabaseCleaner.strategy = :transaction }
