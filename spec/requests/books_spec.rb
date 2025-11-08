@@ -1,12 +1,13 @@
 describe "@Books - API endpoints", type: :request do
-  let!(:book1) { create(:book, title: "A Song of Ice and Fire")}
-  let!(:book2) { create(:book, title: "The lion, the witch and the wardrobe")}
-
+  let!(:book1) { create(:book, title: "A Song of Ice and Fire")} # sem o published_year para ser utilizado nos testes
+  let!(:book2) { create(:book, title: "The lion, the witch and the wardrobe", published_year: 1950)}
+  let!(:book3) { create(:book, title: "The Wealth of Nations" , published_year: 1776)}
+  
   describe "GET /books" do
     it "returns all books" do
       get '/books'
       expect(last_response.status).to eq(200)
-      expect(json_body.size).to eq(2)
+      expect(json_body.size).to eq(3)
       expect(json_body.map  { |b| b['title'] }).to include("A Song of Ice and Fire")
     end
   end
@@ -28,6 +29,15 @@ describe "@Books - API endpoints", type: :request do
         expect(last_response.status).to eq(404)
         expect(json_body['error']).to eq('Book not found')
       end
+    end
+  end
+
+  describe "GET /books?published_year=" do
+    it 'returns books by published_year' do
+      get "/books?published_year=#{book2.published_year}"
+
+      expect(last_response.status).to eq(200)
+      expect(json_body.size).to eq(1)
     end
   end
 

@@ -4,7 +4,12 @@ require './models/book'
 
 class BooksRoutes < Sinatra::Base
   get '/' do
-    books = Book.all
+    if params['published_year']
+      books = Book.where(published_year: params['published_year'])
+    else
+      books = Book.all
+    end
+
     books.to_json
   end
 
