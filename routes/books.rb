@@ -14,7 +14,7 @@ class BooksRoutes < Sinatra::Base
     if book
       book.to_json
     else
-      halt 404, { error: 'Book not found' }.to_json  
+      halt 404, { error: 'Book not found' }.to_json
     end
   end
 
@@ -24,6 +24,40 @@ class BooksRoutes < Sinatra::Base
       author: params[:author],
       published_year: params[:published_year]
     )
-    book.to_json
+
+    if book.save
+      status 201
+      book.to_json
+    else
+      halt 422, { error: book.errors.full_messages }.to_json
+    end
   end
+
+  put '/:id' do
+    book = Book.find_by(id: params[:id])
+
+    if book.nil?
+      halt 404, { error: 'Book not found' }.to_json
+    elsif book.update(
+      title: params[:title],
+      author: params[:author],
+      published_year: params[:published_year]
+    )
+      status(200)
+      book.to_json
+    else
+      halt 422, { error: book.errors.full_messages }.to_json
+    end
+  end
+
+  delete '/:id' do
+    book = Book.find_by(id: params[:id])
+
+    if book
+      book.destroy
+      status(204)
+    else
+      halt 404, { error: 'Book not found' }.to_json
+    end
+  end 
 end

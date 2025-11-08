@@ -3,5 +3,8 @@ require 'active_record'
 
 class Book < ActiveRecord::Base
   has_many :reviews
-  has_many :users, through: :reviews 
+  has_many :users, through: :reviews
+
+  validates :title, presence: true
+  validates :author, presence: true
 end
