@@ -64,6 +64,35 @@ describe "@Books - API endpoints", type: :request do
    end
   end
 
+  describe "GET /books/:id/reviews" do
+    context "when book exists" do
+      let(:bob)   { create(:user, name: "Bob") }
+      let(:alice) { create(:user, name: "Alice") }
+
+      it "returns all reviews for the book" do
+        create(:review, book: book1, user: bob, comment: "Great!")
+        create(:review, book: book1, user: alice, comment: "Good book!")
+
+        get "/books/#{book1.id}/reviews"
+
+        expect(last_response.status).to eq(200)
+        expect(json_body.size).to eq(2)
+        expect(json_body.first['comment']).to eq('Great!')
+        expect(json_body.first['user_id']).to eq(bob.id)
+        expect(json_body.last['comment']).to eq('Good book!')
+        expect(json_body.last['user_id']).to eq(alice.id)
+      end
+    end
+
+    context "when book does not exist" do
+      it "returns a 404 not found" do
+        get "/books/999999/reviews"
+
+        expect(last_response.status).to eq(404)
+      end
+    end
+  end
+
   describe "PUT /books/:id" do
     context "with valid_params" do
       let(:valid_params) {{ title: "New Title", author: "New Author" }}

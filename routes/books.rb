@@ -18,6 +18,17 @@ class BooksRoutes < Sinatra::Base
     end
   end
 
+  get '/:id/reviews' do
+    book = Book.find_by(id: params[:id])
+
+    if book
+      reviews = book.reviews
+      reviews.to_json
+    else
+      halt 404, { error: 'Book not found' }.to_json
+    end
+  end
+
   post '/' do
     book = Book.create(
       title: params[:title],
